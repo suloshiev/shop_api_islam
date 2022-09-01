@@ -16,13 +16,13 @@ class UserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         return user
-
+    
     def create_user(self, email, password=None, **kwargs):
         kwargs.setdefault('is_staff', False)
         kwargs.setdefault('is_superuser', False)
         return self._create_user(email, password, **kwargs)
-
-    def create_superuser(self, email,password, **kwargs):
+    
+    def create_superuser(self, email, password, **kwargs):
         kwargs.setdefault('is_staff', True)
         kwargs.setdefault('is_superuser', True)
         kwargs.setdefault('is_active', True)
@@ -32,15 +32,16 @@ class UserManager(BaseUserManager):
             raise ValueError('Superuser must have status is_superuser=True')
         return self._create_user(email, password, **kwargs)
 
+
 # for user in CustomUser 
 # user.email
 class CustomUser(AbstractUser):
-    email = models.EmailField('email address', unique=True,)
-    password = models.CharField(max_length=30)
+    email = models.EmailField('email address', unique=True)
+    password = models.CharField(max_length=100)
     activation_code = models.CharField(max_length=255, blank=True)
     username = models.CharField(max_length=255, blank=True)
     first_name = models.CharField(max_length=100, blank=True)
-    last_name=models.CharField(max_length=100, blank=True)
+    last_name = models.CharField(max_length=100, blank=True)
     
     objects = UserManager()
 
@@ -48,15 +49,15 @@ class CustomUser(AbstractUser):
     REQUIRED_FIELDS = []
 
     is_active = models.BooleanField(
-        'active',
+        _('active'),
         default=False,
         help_text=_(
             'Designates whether this user should be treated as active. '
-            'Unselect this instead of deleting accounts.'),)
+            'Unselect this instead of deleting accounts.'))
 
     def __str__(self):
         return self.email
-
+    
     def create_activation_code(self):
         import uuid
         code = str(uuid.uuid4())
